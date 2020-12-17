@@ -16,9 +16,9 @@ module.exports = async function syncDriveInfo(drive, feed) {
     indexJSON.title = feed.title;
   }
 
-  if (indexJSON.description !== feed.summary) {
+  if (indexJSON.description !== feed.subtitle) {
     updated = true;
-    indexJSON.description = feed.summary;
+    indexJSON.description = feed.subtitle;
   }
 
   if (updated) {
