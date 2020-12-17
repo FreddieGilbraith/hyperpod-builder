@@ -1,3 +1,5 @@
+var path = require("path");
+
 const makeAsyncHyperFn = require("./makeAsyncHyperFn");
 const cloneFromHttpToHyper = require("./cloneFromHttpToHyper");
 
@@ -57,8 +59,14 @@ async function syncEpisode(
     console.log("syncEpisodes", slug, "create", `/media/${slug}/thumb`);
     await cloneFromHttpToHyper(drive, artwork, `/media/${slug}/thumb`);
 
-    console.log("syncEpisodes", slug, "create", `/media/${slug}/media.mp3`);
-    await cloneFromHttpToHyper(drive, link, `/media/${slug}/media`);
+    const format = path.extname(link);
+    console.log(
+      "syncEpisodes",
+      slug,
+      "create",
+      `/media/${slug}/media${format}`
+    );
+    await cloneFromHttpToHyper(drive, link, `/media/${slug}/media${format}`);
   } else {
     console.log("syncEpisodes", slug, "exists");
   }
