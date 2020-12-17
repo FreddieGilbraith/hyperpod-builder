@@ -7,10 +7,8 @@ const syncDriveInfo = require("./syncDriveInfo");
 const syncThumb = require("./syncThumb");
 const syncEpisodes = require("./syncEpisodes");
 
-const tempData = require("../tempData.json");
-
 async function run(drive, rss) {
-  const feed = tempData;
+  const feed = require("../tempData.json");
   //const feed = await getPodcastFeed(rss);
 
   await syncDriveInfo(drive, feed);
@@ -24,21 +22,27 @@ async function run(drive, rss) {
     : undefined;
 
   const rss = process.argv[2];
-  const client = new HyperspaceClient();
-  const drive = hyperdrive(client.corestore(), key);
-
-  await new Promise((x) => drive.on("ready", x));
-
-  console.log(`synching ${rss} to hyper://${drive.key.toString("hex")}`);
 
   try {
-    await run(drive, rss);
-  } catch (e) {
-    console.error(e);
-  }
+    const client = new HyperspaceClient();
+    const drive = hyperdrive(client.corestore(), key);
 
-  await new Promise((x) => drive.close(x));
-  await new Promise((x) => client.close(x));
+    await new Promise((x) => drive.on("ready", x));
+
+    console.log(`Synching ${rss} to\nhyper://${drive.key.toString("hex")}\n`);
+    console.warn("Please only use this tool to host podcasts that *YOU OWN*\n");
+
+    try {
+      await run(drive, rss);
+    } catch (e) {
+      console.error(e);
+    }
+
+    await new Promise((x) => drive.close(x));
+    await new Promise((x) => client.close(x));
+  } catch (e) {
+    console.error("I don't think the hyperspace daemon is running");
+  }
 
   console.log("DONE");
 })();
